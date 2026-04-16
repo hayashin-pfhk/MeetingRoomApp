@@ -27,6 +27,7 @@ class UpdateReservationRequest extends FormRequest
         return [
             'room_id'      => ['required', 'integer', 'exists:rooms,id'],
             'title'        => ['required', 'string', 'max:255'],
+            'memo'         => ['nullable', 'string'],
             'start_time'   => ['required', 'date', 'after_or_equal:now'],
             'end_time'     => ['required', 'date', 'after:start_time'],
             'staff_ids'    => ['required', 'array', 'min:1'],
