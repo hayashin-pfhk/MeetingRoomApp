@@ -20,6 +20,7 @@ class ReservationResource extends JsonResource
             'title'      => $this->title,
             'start_time' => $this->start_time?->toIso8601String(),
             'end_time'   => $this->end_time?->toIso8601String(),
+            'memo'       => $this->memo,
             'room'       => new RoomResource($this->whenLoaded('room')),
             'staffs'     => StaffResource::collection($this->whenLoaded('staffs')),
             'created_at' => $this->created_at?->toIso8601String(),

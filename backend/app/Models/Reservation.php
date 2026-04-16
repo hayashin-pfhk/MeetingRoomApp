@@ -30,6 +30,7 @@ class Reservation extends Model
         'title',
         'start_time',
         'end_time',
+        'memo',
     ];
 
     /**
