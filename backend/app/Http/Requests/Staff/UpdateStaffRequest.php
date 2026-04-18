@@ -31,13 +31,15 @@ class UpdateStaffRequest extends FormRequest
                 'max:255',
                 Rule::unique('staffs', 'name')->ignore($staffId),
             ],
+            'department' => ['nullable', 'string', 'max:255'],
         ];
     }
 
     public function attributes(): array
     {
         return [
-            'name' => 'スタッフ名',
+            'name'       => 'スタッフ名',
+            'department' => '部署',
         ];
     }
 }

@@ -6,33 +6,7 @@ import { useEffect, useRef, useState } from "react";
 const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
 
 type Room = { id: number; name: string };
-type Staff = { id: number; name: string };
-
-const staffGroups: { label: string; names: string[] }[] = [
-  {
-    label: "役員",
-    names: ["田中", "佐藤(花)", "佐藤(菜)"],
-  },
-  {
-    label: "窓口担当",
-    names: [
-      "鈴木", "高橋", "伊藤", "渡辺", "山本(大)", "山本(凛)", "中村",
-      "小林", "加藤", "吉田", "山田", "佐々木", "松本", "井上", "木村",
-      "林", "清水", "山口", "阿部", "森田",
-    ],
-  },
-  {
-    label: "C#",
-    names: [
-      "池田", "橋本", "石川", "前田", "藤田", "後藤",
-      "岡田", "村上", "近藤", "坂本", "遠藤", "青木",
-    ],
-  },
-  {
-    label: "PHP",
-    names: ["藤井", "三浦", "岩崎", "福田", "原田"],
-  },
-];
+type Staff = { id: number; name: string; department: string | null };
 
 const summaryOptions = [
   "設計書レビュー",
@@ -352,27 +326,29 @@ export default function NewReservationPage() {
 
         <div className="w-60 space-y-3">
           <label className="block text-sm font-bold">参加者</label>
-          {staffGroups.map((group) => {
-            const groupStaffs = staffs.filter((s) => group.names.includes(s.name));
-            if (groupStaffs.length === 0) return null;
-            return (
-              <div key={group.label}>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{group.label}</p>
-                <div className="flex flex-wrap gap-2">
-                  {groupStaffs.map((staff) => (
-                    <label key={staff.id} className="flex items-center gap-1 text-sm">
-                      <input
-                        type="checkbox"
-                        checked={staffIds.includes(staff.id)}
-                        onChange={() => toggleStaff(staff.id)}
-                      />
-                      {staff.name}
-                    </label>
-                  ))}
-                </div>
+          {Object.entries(
+            staffs.reduce<Record<string, Staff[]>>((groups, staff) => {
+              const dept = staff.department ?? "未所属";
+              (groups[dept] ??= []).push(staff);
+              return groups;
+            }, {})
+          ).map(([dept, members]) => (
+            <div key={dept}>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">{dept}</p>
+              <div className="flex flex-wrap gap-2">
+                {members.map((staff) => (
+                  <label key={staff.id} className="flex items-center gap-1 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={staffIds.includes(staff.id)}
+                      onChange={() => toggleStaff(staff.id)}
+                    />
+                    {staff.name}
+                  </label>
+                ))}
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
         </div>
 

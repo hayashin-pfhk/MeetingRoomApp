@@ -22,7 +22,8 @@ class StoreStaffRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255', 'unique:staffs,name'],
+            'name'       => ['required', 'string', 'max:255', 'unique:staffs,name'],
+            'department' => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -30,7 +31,8 @@ class StoreStaffRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => 'スタッフ名',
+            'name'       => 'スタッフ名',
+            'department' => '部署',
         ];
     }
 }

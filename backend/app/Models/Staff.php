@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  *
  * @property int $id
  * @property string $name
+ * @property string|null $department
  * @property \Illuminate\Support\Carbon $created_at
  * @property \Illuminate\Support\Carbon $updated_at
  */
@@ -29,6 +30,7 @@ class Staff extends Model
      */
     protected $fillable = [
         'name',
+        'department',
     ];
 
     /**

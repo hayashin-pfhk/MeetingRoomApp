@@ -21,9 +21,10 @@ class StaffAvailabilityResource extends JsonResource
         $conflicting = $this->reservations->first();
 
         return [
-            'id'        => $this->id,
-            'name'      => $this->name,
-            'available' => $conflicting === null,
+            'id'         => $this->id,
+            'name'       => $this->name,
+            'department' => $this->department,
+            'available'  => $conflicting === null,
             'conflicting_reservation' => $conflicting === null ? null : [
                 'id'         => $conflicting->id,
                 'title'      => $conflicting->title,
