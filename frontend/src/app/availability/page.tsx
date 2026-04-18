@@ -14,13 +14,36 @@ type Reservation = {
   end_time: string;
 };
 
-const timeSlots = [
+const baseTimeSlots = [
   "10:00", "10:30", "11:00", "11:30",
   "12:00", "12:30", "13:00", "13:30",
   "14:00", "14:30", "15:00", "15:30",
   "16:00", "16:30", "17:00", "17:30",
   "18:00", "18:30", "19:00",
 ];
+
+function buildTimeSlots(reservations: Reservation[], date: string): string[] {
+  const extra = new Set<string>();
+
+  for (const r of reservations) {
+    const rStart = new Date(r.start_time);
+    const rEnd = new Date(r.end_time);
+
+    // 30分刻みでスロットを生成
+    const cursor = new Date(rStart);
+    while (cursor < rEnd) {
+      const hh = String(cursor.getHours()).padStart(2, "0");
+      const mm = String(cursor.getMinutes()).padStart(2, "0");
+      const slot = `${hh}:${mm}`;
+      if (!baseTimeSlots.includes(slot)) {
+        extra.add(slot);
+      }
+      cursor.setMinutes(cursor.getMinutes() + 30);
+    }
+  }
+
+  return [...baseTimeSlots, ...extra].sort();
+}
 
 function getBookingForSlot(slot: string, date: string, staffId: number, reservations: Reservation[]) {
   const slotStart = new Date(`${date}T${slot}:00`);
@@ -90,6 +113,7 @@ export default function AvailabilityPage() {
   };
 
   const selectedStaffs = staffs.filter((s) => selectedIds.includes(s.id));
+  const timeSlots = buildTimeSlots(reservations, date);
 
   return (
     <div>

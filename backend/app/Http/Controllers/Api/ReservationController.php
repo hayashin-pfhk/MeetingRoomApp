@@ -21,6 +21,7 @@ class ReservationController extends Controller
     public function index(): AnonymousResourceCollection
     {
         $reservations = Reservation::with(['room', 'staffs'])
+            ->whereDate('start_time', '>=', now()->toDateString())
             ->orderBy('start_time')
             ->get();
 
