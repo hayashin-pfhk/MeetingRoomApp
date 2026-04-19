@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
+import { api } from "@/lib/api";
 
 type Staff = { id: number; name: string };
 type Reservation = {
@@ -67,9 +66,9 @@ export default function AvailabilityPage() {
   const [searched, setSearched] = useState(false);
 
   useEffect(() => {
-    fetch(`${API}/staffs`)
-      .then((r) => r.json())
-      .then((data) => setStaffs(data.data ?? data))
+    api
+      .get<Staff[]>("/staffs")
+      .then(setStaffs)
       .catch(() => setStaffs([]));
   }, []);
 
@@ -84,9 +83,7 @@ export default function AvailabilityPage() {
     setLoading(true);
     setSelectedIds([]);
     try {
-      const res = await fetch(`${API}/reservations`);
-      const data = await res.json();
-      const all: Reservation[] = data.data ?? data;
+      const all = await api.get<Reservation[]>("/reservations");
       const filtered = all.filter((r) => {
         const rDate = new Date(r.start_time).toISOString().split("T")[0];
         return rDate === date;

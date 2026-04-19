@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
+import { api } from "@/lib/api";
 
 type Reservation = {
   id: number;
@@ -37,9 +36,9 @@ export default function ReservationDetailPage() {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
-    fetch(`${API}/reservations/${id}`)
-      .then((res) => res.json())
-      .then((data) => setReservation(data.data ?? data))
+    api
+      .get<Reservation>(`/reservations/${id}`)
+      .then(setReservation)
       .catch(() => setReservation(null))
       .finally(() => setLoading(false));
   }, [id]);
@@ -48,7 +47,7 @@ export default function ReservationDetailPage() {
     if (!confirm("この予約を削除しますか？")) return;
     setDeleting(true);
     try {
-      await fetch(`${API}/reservations/${id}`, { method: "DELETE" });
+      await api.delete(`/reservations/${id}`);
       router.push("/reservations");
     } catch {
       alert("削除に失敗しました");

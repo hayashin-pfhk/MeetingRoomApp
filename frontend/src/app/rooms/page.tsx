@@ -1,8 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
+import { api } from "@/lib/api";
 
 type Room = {
   id: number;
@@ -19,9 +18,9 @@ export default function RoomsPage() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
   const fetchRooms = () => {
-    fetch(`${API}/rooms`)
-      .then((res) => res.json())
-      .then((data) => setRooms(data.data ?? data))
+    api
+      .get<Room[]>("/rooms")
+      .then(setRooms)
       .catch(() => setRooms([]))
       .finally(() => setLoading(false));
   };
@@ -32,11 +31,7 @@ export default function RoomsPage() {
 
   const handleCreate = async () => {
     if (!newName.trim()) return;
-    await fetch(`${API}/rooms`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: newName.trim() }),
-    });
+    await api.post("/rooms", { name: newName.trim() }).catch(() => {});
     setNewName("");
     setShowForm(false);
     fetchRooms();
@@ -44,11 +39,7 @@ export default function RoomsPage() {
 
   const handleUpdate = async (id: number) => {
     if (!editName.trim()) return;
-    await fetch(`${API}/rooms/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: editName.trim() }),
-    });
+    await api.put(`/rooms/${id}`, { name: editName.trim() }).catch(() => {});
     setEditId(null);
     setSelectedId(null);
     fetchRooms();
@@ -56,7 +47,7 @@ export default function RoomsPage() {
 
   const handleDelete = async (id: number) => {
     if (!confirm("この会議室を削除しますか？")) return;
-    await fetch(`${API}/rooms/${id}`, { method: "DELETE" });
+    await api.delete(`/rooms/${id}`).catch(() => {});
     setSelectedId(null);
     fetchRooms();
   };

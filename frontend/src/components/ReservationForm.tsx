@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
+import { api } from "@/lib/api";
 
 type Room = { id: number; name: string };
 type Staff = { id: number; name: string; department: string | null };
@@ -77,13 +76,10 @@ export default function ReservationForm({
   const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    Promise.all([
-      fetch(`${API}/rooms`).then((r) => r.json()),
-      fetch(`${API}/staffs`).then((r) => r.json()),
-    ])
+    Promise.all([api.get<Room[]>("/rooms"), api.get<Staff[]>("/staffs")])
       .then(([roomsData, staffsData]) => {
-        setRooms(roomsData.data ?? roomsData);
-        setStaffs(staffsData.data ?? staffsData);
+        setRooms(roomsData);
+        setStaffs(staffsData);
       })
       .catch(() => {});
   }, []);

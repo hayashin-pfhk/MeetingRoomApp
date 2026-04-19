@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
+import { api } from "@/lib/api";
 
 type Room = { id: number; name: string };
 
@@ -41,12 +40,12 @@ export default function ReservationsPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch(`${API}/rooms`).then((r) => r.json()),
-      fetch(`${API}/reservations`).then((r) => r.json()),
+      api.get<Room[]>("/rooms"),
+      api.get<Reservation[]>("/reservations"),
     ])
       .then(([roomsData, resData]) => {
-        setRooms(roomsData.data ?? roomsData);
-        setReservations(resData.data ?? resData);
+        setRooms(roomsData);
+        setReservations(resData);
       })
       .catch(() => {
         setRooms([]);

@@ -6,8 +6,16 @@ import ReservationForm, {
   ReservationFormData,
   ReservationInitialData,
 } from "@/components/ReservationForm";
+import { ApiError, api } from "@/lib/api";
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
+type ReservationDetail = {
+  title: string;
+  start_time: string;
+  end_time: string;
+  memo: string | null;
+  room: { id: number } | null;
+  staffs: { id: number }[];
+};
 
 export default function EditReservationPage() {
   const params = useParams();
@@ -20,10 +28,9 @@ export default function EditReservationPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch(`${API}/reservations/${id}`)
-      .then((r) => r.json())
-      .then((resData) => {
-        const reservation = resData.data ?? resData;
+    api
+      .get<ReservationDetail>(`/reservations/${id}`)
+      .then((reservation) => {
         const start = new Date(reservation.start_time);
         const end = new Date(reservation.end_time);
         const pad = (n: number) => String(n).padStart(2, "0");
@@ -31,7 +38,7 @@ export default function EditReservationPage() {
         setInitialData({
           title: reservation.title ?? "",
           roomId: String(reservation.room?.id ?? ""),
-          staffIds: reservation.staffs?.map((s: { id: number }) => s.id) ?? [],
+          staffIds: reservation.staffs?.map((s) => s.id) ?? [],
           startDate: `${start.getFullYear()}-${pad(start.getMonth() + 1)}-${pad(start.getDate())}`,
           startHour: pad(start.getHours()),
           startMin: pad(start.getMinutes()),
@@ -49,22 +56,12 @@ export default function EditReservationPage() {
     setSubmitting(true);
 
     try {
-      const res = await fetch(`${API}/reservations/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!res.ok) {
-        const json = await res.json();
-        setError(json.message || "更新に失敗しました");
-        setSubmitting(false);
-        return;
-      }
-
+      await api.put(`/reservations/${id}`, data);
       router.push(`/reservations/${id}`);
-    } catch {
-      setError("更新に失敗しました");
+    } catch (e) {
+      const message =
+        e instanceof ApiError ? e.message : "";
+      setError(message || "更新に失敗しました");
       setSubmitting(false);
     }
   };

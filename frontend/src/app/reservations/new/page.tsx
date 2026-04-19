@@ -3,8 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ReservationForm, { ReservationFormData } from "@/components/ReservationForm";
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
+import { ApiError, api } from "@/lib/api";
 
 export default function NewReservationPage() {
   const router = useRouter();
@@ -16,22 +15,12 @@ export default function NewReservationPage() {
     setSubmitting(true);
 
     try {
-      const res = await fetch(`${API}/reservations`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!res.ok) {
-        const json = await res.json();
-        setError(json.message || "作成に失敗しました");
-        setSubmitting(false);
-        return;
-      }
-
+      await api.post("/reservations", data);
       router.push("/reservations");
-    } catch {
-      setError("作成に失敗しました");
+    } catch (e) {
+      const message =
+        e instanceof ApiError ? e.message : "";
+      setError(message || "作成に失敗しました");
       setSubmitting(false);
     }
   };
