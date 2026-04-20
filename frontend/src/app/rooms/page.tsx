@@ -2,11 +2,7 @@
 
 import { Fragment, useEffect, useState } from "react";
 import { api } from "@/lib/api";
-
-type Room = {
-  id: number;
-  name: string;
-};
+import { Room } from "@/types";
 
 export default function RoomsPage() {
   const [rooms, setRooms] = useState<Room[]>([]);

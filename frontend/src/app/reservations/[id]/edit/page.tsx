@@ -7,15 +7,7 @@ import ReservationForm, {
   ReservationInitialData,
 } from "@/components/ReservationForm";
 import { ApiError, api } from "@/lib/api";
-
-type ReservationDetail = {
-  title: string;
-  start_time: string;
-  end_time: string;
-  memo: string | null;
-  room: { id: number } | null;
-  staffs: { id: number }[];
-};
+import { Reservation } from "@/types";
 
 export default function EditReservationPage() {
   const params = useParams();
@@ -29,7 +21,7 @@ export default function EditReservationPage() {
 
   useEffect(() => {
     api
-      .get<ReservationDetail>(`/reservations/${id}`)
+      .get<Reservation>(`/reservations/${id}`)
       .then((reservation) => {
         const start = new Date(reservation.start_time);
         const end = new Date(reservation.end_time);

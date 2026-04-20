@@ -4,16 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-
-type Reservation = {
-  id: number;
-  title: string;
-  memo: string | null;
-  room: { id: number; name: string } | null;
-  staffs: { id: number; name: string }[];
-  start_time: string;
-  end_time: string;
-};
+import { Reservation } from "@/types";
 
 function formatDateTime(iso: string) {
   const d = new Date(iso);

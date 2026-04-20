@@ -2,16 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-
-type Staff = { id: number; name: string };
-type Reservation = {
-  id: number;
-  title: string;
-  room: { id: number; name: string } | null;
-  staffs: { id: number; name: string }[];
-  start_time: string;
-  end_time: string;
-};
+import { Reservation, Staff } from "@/types";
 
 const baseTimeSlots = [
   "10:00", "10:30", "11:00", "11:30",

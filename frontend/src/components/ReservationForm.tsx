@@ -2,9 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api";
-
-type Room = { id: number; name: string };
-type Staff = { id: number; name: string; department: string | null };
+import { Room, Staff } from "@/types";
 
 export type ReservationFormData = {
   title: string;

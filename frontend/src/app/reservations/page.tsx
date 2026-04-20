@@ -3,18 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-
-type Room = { id: number; name: string };
-
-type Reservation = {
-  id: number;
-  title: string;
-  memo: string | null;
-  room: { id: number; name: string } | null;
-  staffs: { id: number; name: string }[];
-  start_time: string;
-  end_time: string;
-};
+import { Reservation, Room } from "@/types";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
