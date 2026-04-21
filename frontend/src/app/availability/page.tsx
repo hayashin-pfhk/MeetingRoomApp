@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { todayStr, tomorrowStr, toTimeStr } from "@/lib/datetime";
 import { Reservation, Staff } from "@/types";
 
 const baseTimeSlots = [
@@ -22,9 +23,7 @@ function buildTimeSlots(reservations: Reservation[], date: string): string[] {
     // 30分刻みでスロットを生成
     const cursor = new Date(rStart);
     while (cursor < rEnd) {
-      const hh = String(cursor.getHours()).padStart(2, "0");
-      const mm = String(cursor.getMinutes()).padStart(2, "0");
-      const slot = `${hh}:${mm}`;
+      const slot = toTimeStr(cursor);
       if (!baseTimeSlots.includes(slot)) {
         extra.add(slot);
       }
@@ -87,17 +86,6 @@ export default function AvailabilityPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const todayStr = () => {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-  };
-
-  const tomorrowStr = () => {
-    const d = new Date();
-    d.setDate(d.getDate() + 1);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   };
 
   const selectedStaffs = staffs.filter((s) => selectedIds.includes(s.id));

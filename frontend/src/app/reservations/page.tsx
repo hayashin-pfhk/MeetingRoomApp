@@ -3,23 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { formatMonthDay, formatTime } from "@/lib/datetime";
 import { Reservation, Room } from "@/types";
-
-function formatDate(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleString("ja-JP", {
-    month: "2-digit",
-    day: "2-digit",
-  });
-}
-
-function formatTime(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleString("ja-JP", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 export default function ReservationsPage() {
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -119,7 +104,7 @@ export default function ReservationsPage() {
                       <td className="py-2 pr-2">
                         {r.staffs.map((s) => s.name).join(", ") || "-"}
                       </td>
-                      <td className="py-2 pr-2">{formatDate(r.start_time)}</td>
+                      <td className="py-2 pr-2">{formatMonthDay(r.start_time)}</td>
                       <td className="py-2 pr-2">{formatTime(r.start_time)}〜{formatTime(r.end_time)}</td>
                       <td className="py-2">
                         <Link

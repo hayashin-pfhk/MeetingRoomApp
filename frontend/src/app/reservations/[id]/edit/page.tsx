@@ -7,6 +7,7 @@ import ReservationForm, {
   ReservationInitialData,
 } from "@/components/ReservationForm";
 import { ApiError, api } from "@/lib/api";
+import { splitDateTime } from "@/lib/datetime";
 import { Reservation } from "@/types";
 
 export default function EditReservationPage() {
@@ -23,19 +24,18 @@ export default function EditReservationPage() {
     api
       .get<Reservation>(`/reservations/${id}`)
       .then((reservation) => {
-        const start = new Date(reservation.start_time);
-        const end = new Date(reservation.end_time);
-        const pad = (n: number) => String(n).padStart(2, "0");
+        const start = splitDateTime(reservation.start_time);
+        const end = splitDateTime(reservation.end_time);
 
         setInitialData({
           title: reservation.title ?? "",
           roomId: String(reservation.room?.id ?? ""),
           staffIds: reservation.staffs?.map((s) => s.id) ?? [],
-          startDate: `${start.getFullYear()}-${pad(start.getMonth() + 1)}-${pad(start.getDate())}`,
-          startHour: pad(start.getHours()),
-          startMin: pad(start.getMinutes()),
-          endHour: pad(end.getHours()),
-          endMin: pad(end.getMinutes()),
+          startDate: start.date,
+          startHour: start.hour,
+          startMin: start.min,
+          endHour: end.hour,
+          endMin: end.min,
           memo: reservation.memo ?? "参加者：\n概要：",
         });
       })

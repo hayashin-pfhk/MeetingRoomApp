@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api";
+import { todayStr, tomorrowStr, toTimeStr } from "@/lib/datetime";
 import { Room, Staff } from "@/types";
 
 export type ReservationFormData = {
@@ -193,21 +194,14 @@ export default function ReservationForm({
               <label className="text-sm">開始日</label>
               <button
                 type="button"
-                onClick={() => {
-                  const today = new Date();
-                  setStartDate(`${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`);
-                }}
+                onClick={() => setStartDate(todayStr())}
                 className="px-2 py-0.5 text-xs border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 今日
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  const tomorrow = new Date();
-                  tomorrow.setDate(tomorrow.getDate() + 1);
-                  setStartDate(`${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, "0")}-${String(tomorrow.getDate()).padStart(2, "0")}`);
-                }}
+                onClick={() => setStartDate(tomorrowStr())}
                 className="px-2 py-0.5 text-xs border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 明日
@@ -264,8 +258,9 @@ export default function ReservationForm({
                 onClick={() => {
                   if (!startHour || !startMin) return;
                   const d = new Date(2000, 0, 1, Number(startHour), Number(startMin) + 30);
-                  setEndHour(String(d.getHours()).padStart(2, "0"));
-                  setEndMin(String(d.getMinutes()).padStart(2, "0"));
+                  const [h, m] = toTimeStr(d).split(":");
+                  setEndHour(h);
+                  setEndMin(m);
                 }}
                 className="px-2 py-0.5 text-xs border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
               >
@@ -276,8 +271,9 @@ export default function ReservationForm({
                 onClick={() => {
                   if (!startHour || !startMin) return;
                   const d = new Date(2000, 0, 1, Number(startHour) + 1, Number(startMin));
-                  setEndHour(String(d.getHours()).padStart(2, "0"));
-                  setEndMin(String(d.getMinutes()).padStart(2, "0"));
+                  const [h, m] = toTimeStr(d).split(":");
+                  setEndHour(h);
+                  setEndMin(m);
                 }}
                 className="px-2 py-0.5 text-xs border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
               >

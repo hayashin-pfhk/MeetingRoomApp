@@ -4,18 +4,8 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { formatDateTime } from "@/lib/datetime";
 import { Reservation } from "@/types";
-
-function formatDateTime(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleString("ja-JP", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
 
 export default function ReservationDetailPage() {
   const params = useParams();
