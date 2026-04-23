@@ -23,8 +23,6 @@ class ReservationResource extends JsonResource
             'memo'       => $this->memo,
             'room'       => new RoomResource($this->whenLoaded('room')),
             'staffs'     => StaffResource::collection($this->whenLoaded('staffs')),
-            'created_at' => $this->created_at?->toIso8601String(),
-            'updated_at' => $this->updated_at?->toIso8601String(),
         ];
     }
 }
