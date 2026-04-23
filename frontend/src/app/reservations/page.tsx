@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { formatMonthDay, formatTime } from "@/lib/datetime";
+import { extractSummary } from "@/lib/memo";
 import { Reservation, Room } from "@/types";
 
 export default function ReservationsPage() {
@@ -98,7 +99,7 @@ export default function ReservationsPage() {
                     >
                       <td className="py-2 pr-2">{r.title}</td>
                       <td className="py-2 pr-2 text-gray-500 dark:text-gray-400">
-                        {r.memo?.match(/概要：(.+)/)?.[1] ?? "-"}
+                        {extractSummary(r.memo) ?? "-"}
                       </td>
                       <td className="py-2 pr-2">{r.room?.name ?? "-"}</td>
                       <td className="py-2 pr-2">

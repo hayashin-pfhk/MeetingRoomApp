@@ -3,6 +3,12 @@
 import { useEffect, useReducer } from "react";
 import { api } from "@/lib/api";
 import { toTimeStr } from "@/lib/datetime";
+import {
+  DEFAULT_MEMO,
+  extractSummary,
+  replaceParticipants,
+  replaceSummary,
+} from "@/lib/memo";
 import { Room, Staff } from "@/types";
 
 export type ReservationFormData = {
@@ -88,20 +94,10 @@ const initialState: State = {
   startMin: "",
   endHour: "",
   endMin: "",
-  memo: "参加者：\n概要：",
+  memo: DEFAULT_MEMO,
   summary: "",
   initialized: false,
 };
-
-// メモ内の「参加者：」行を指定の名前で置換
-function replaceParticipants(memo: string, names: string[]): string {
-  return memo.replace(/参加者：.*/, `参加者：${names.join(", ")}`);
-}
-
-// メモ内の「概要：」行を指定の概要で置換
-function replaceSummary(memo: string, summary: string): string {
-  return memo.replace(/概要：.*/, `概要：${summary}`);
-}
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -161,9 +157,9 @@ function reducer(state: State, action: Action): State {
     case "INITIALIZE": {
       const { data } = action;
       const template = TEMPLATES.includes(data.title) ? data.title : "";
-      const match = data.memo.match(/概要：(.+)/);
+      const extracted = extractSummary(data.memo);
       const summary =
-        match && SUMMARY_OPTIONS.includes(match[1]) ? match[1] : "";
+        extracted && SUMMARY_OPTIONS.includes(extracted) ? extracted : "";
       return {
         ...state,
         title: data.title,

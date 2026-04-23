@@ -9,6 +9,7 @@ import {
 } from "@/hooks/useReservationForm";
 import { ApiError, api } from "@/lib/api";
 import { splitDateTime } from "@/lib/datetime";
+import { DEFAULT_MEMO } from "@/lib/memo";
 import { Reservation } from "@/types";
 
 export default function EditReservationPage() {
@@ -37,7 +38,7 @@ export default function EditReservationPage() {
           startMin: start.min,
           endHour: end.hour,
           endMin: end.min,
-          memo: reservation.memo ?? "参加者：\n概要：",
+          memo: reservation.memo ?? DEFAULT_MEMO,
         });
       })
       .catch(() => {})
