@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { ApiError, api } from "@/lib/api";
 import { Room } from "@/types";
 
 export default function RoomsPage() {
@@ -27,25 +27,40 @@ export default function RoomsPage() {
 
   const handleCreate = async () => {
     if (!newName.trim()) return;
-    await api.post("/rooms", { name: newName.trim() }).catch(() => {});
-    setNewName("");
-    setShowForm(false);
-    fetchRooms();
+    try {
+      await api.post("/rooms", { name: newName.trim() });
+      setNewName("");
+      setShowForm(false);
+      fetchRooms();
+    } catch (e) {
+      const message = e instanceof ApiError ? e.message : "作成に失敗しました";
+      alert(message);
+    }
   };
 
   const handleUpdate = async (id: number) => {
     if (!editName.trim()) return;
-    await api.put(`/rooms/${id}`, { name: editName.trim() }).catch(() => {});
-    setEditId(null);
-    setSelectedId(null);
-    fetchRooms();
+    try {
+      await api.put(`/rooms/${id}`, { name: editName.trim() });
+      setEditId(null);
+      setSelectedId(null);
+      fetchRooms();
+    } catch (e) {
+      const message = e instanceof ApiError ? e.message : "更新に失敗しました";
+      alert(message);
+    }
   };
 
   const handleDelete = async (id: number) => {
     if (!confirm("この会議室を削除しますか？")) return;
-    await api.delete(`/rooms/${id}`).catch(() => {});
-    setSelectedId(null);
-    fetchRooms();
+    try {
+      await api.delete(`/rooms/${id}`);
+      setSelectedId(null);
+      fetchRooms();
+    } catch (e) {
+      const message = e instanceof ApiError ? e.message : "削除に失敗しました";
+      alert(message);
+    }
   };
 
   return (

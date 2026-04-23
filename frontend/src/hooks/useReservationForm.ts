@@ -191,7 +191,7 @@ export function useReservationForm(initialData?: ReservationInitialData) {
         dispatch({ type: "SET_ROOMS", rooms });
         dispatch({ type: "SET_STAFFS", staffs });
       })
-      .catch(() => {});
+      .catch((e) => console.error(e));
   }, []);
 
   // 編集時の初期値プリフィル（初回のみ）

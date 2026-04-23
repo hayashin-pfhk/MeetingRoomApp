@@ -19,6 +19,7 @@ export default function EditReservationPage() {
 
   const [initialData, setInitialData] = useState<ReservationInitialData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -41,7 +42,12 @@ export default function EditReservationPage() {
           memo: reservation.memo ?? DEFAULT_MEMO,
         });
       })
-      .catch(() => {})
+      .catch((e) => {
+        console.error(e);
+        const message =
+          e instanceof ApiError ? e.message : "読み込みに失敗しました";
+        setLoadError(message);
+      })
       .finally(() => setLoading(false));
   }, [id]);
 
@@ -62,6 +68,10 @@ export default function EditReservationPage() {
 
   if (loading) {
     return <p className="text-gray-500 dark:text-gray-400">読み込み中...</p>;
+  }
+
+  if (loadError) {
+    return <p className="text-red-600 dark:text-red-400">{loadError}</p>;
   }
 
   return (
