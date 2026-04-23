@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import ReservationForm, { ReservationFormData } from "@/components/ReservationForm";
+import ReservationForm from "@/components/ReservationForm";
+import { ReservationFormData } from "@/hooks/useReservationForm";
 import { ApiError, api } from "@/lib/api";
 
 export default function NewReservationPage() {

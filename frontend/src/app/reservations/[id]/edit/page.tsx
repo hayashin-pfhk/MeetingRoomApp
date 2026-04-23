@@ -2,10 +2,11 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import ReservationForm, {
+import ReservationForm from "@/components/ReservationForm";
+import {
   ReservationFormData,
   ReservationInitialData,
-} from "@/components/ReservationForm";
+} from "@/hooks/useReservationForm";
 import { ApiError, api } from "@/lib/api";
 import { splitDateTime } from "@/lib/datetime";
 import { Reservation } from "@/types";
