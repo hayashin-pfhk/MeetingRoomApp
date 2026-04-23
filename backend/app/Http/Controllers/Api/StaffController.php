@@ -61,22 +61,17 @@ class StaffController extends Controller
     // 空き状況一覧（指定した時間帯における各スタッフの空き/予定状態を返す）
     public function availability(StaffAvailabilityRequest $request): AnonymousResourceCollection
     {
-        $validated  = $request->validated();
-        $startTime  = $validated['start_time'];
-        $endTime    = $validated['end_time'];
-        $excludeId  = $validated['exclude_reservation_id'] ?? null;
+        $validated = $request->validated();
+        $startTime = $validated['start_time'];
+        $endTime   = $validated['end_time'];
+        $excludeId = $validated['exclude_reservation_id'] ?? null;
 
         // 各スタッフについて、指定時間帯に重複する予約だけを Eager Load する
-        // パターンB（end_time exclusive）: existing.start < new.end AND existing.end > new.start
-        $staffs = Staff::with(['reservations' => function ($query) use ($startTime, $endTime, $excludeId) {
-            $query->where('start_time', '<', $endTime)
-                  ->where('end_time', '>', $startTime)
-                  ->with('room');
-
-            if ($excludeId !== null) {
-                $query->where('reservations.id', '!=', $excludeId);
-            }
-        }])
+        $staffs = Staff::with([
+            'reservations' => fn ($query) => $query
+                ->overlapping($startTime, $endTime, $excludeId)
+                ->with('room'),
+        ])
             ->orderBy('id')
             ->get();
 

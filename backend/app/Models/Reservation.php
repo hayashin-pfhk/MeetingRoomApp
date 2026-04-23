@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -55,5 +56,26 @@ class Reservation extends Model
     public function staffs(): BelongsToMany
     {
         return $this->belongsToMany(Staff::class, 'reservation_staff');
+    }
+
+    /**
+     * 指定時間帯と重複する予約に絞り込む Query Scope
+     *
+     * 重複判定は パターンB（end_time 排他）:
+     *   既存.start_time < 新規.end_time AND 既存.end_time > 新規.start_time
+     *
+     * @param Builder $query
+     * @param string $startTime 判定対象の開始時刻
+     * @param string $endTime   判定対象の終了時刻
+     * @param int|null $excludeId 除外する予約 ID（更新時の自己除外用）
+     */
+    public function scopeOverlapping(Builder $query, string $startTime, string $endTime, ?int $excludeId = null): void
+    {
+        $query->where('start_time', '<', $endTime)
+              ->where('end_time', '>', $startTime);
+
+        if ($excludeId !== null) {
+            $query->where('id', '!=', $excludeId);
+        }
     }
 }

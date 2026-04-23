@@ -44,15 +44,11 @@ trait ChecksReservationConflicts
         string $endTime,
         ?int $excludeReservationId
     ): void {
-        $query = Reservation::where('room_id', $roomId)
-            ->where('start_time', '<', $endTime)
-            ->where('end_time', '>', $startTime);
+        $exists = Reservation::where('room_id', $roomId)
+            ->overlapping($startTime, $endTime, $excludeReservationId)
+            ->exists();
 
-        if ($excludeReservationId !== null) {
-            $query->where('id', '!=', $excludeReservationId);
-        }
-
-        if ($query->exists()) {
+        if ($exists) {
             $validator->errors()->add(
                 'room_id',
                 'この会議室は指定された時間帯で既に予約されています。'
@@ -75,9 +71,7 @@ trait ChecksReservationConflicts
         }
 
         $conflictStaffs = Reservation::query()
-            ->where('start_time', '<', $endTime)
-            ->where('end_time', '>', $startTime)
-            ->when($excludeReservationId, fn ($q) => $q->where('id', '!=', $excludeReservationId))
+            ->overlapping($startTime, $endTime, $excludeReservationId)
             ->whereHas('staffs', fn ($q) => $q->whereIn('staffs.id', $staffIds))
             ->with(['staffs' => fn ($q) => $q->whereIn('staffs.id', $staffIds)])
             ->get()
