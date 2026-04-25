@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { todayStr, tomorrowStr, toTimeStr } from "@/lib/datetime";
+import { todayStr, tomorrowStr, toDateStr, toTimeStr } from "@/lib/datetime";
 import { Reservation, Staff } from "@/types";
 
 const baseTimeSlots = [
@@ -75,7 +75,7 @@ export default function AvailabilityPage() {
     try {
       const all = await api.get<Reservation[]>("/reservations");
       const filtered = all.filter((r) => {
-        const rDate = new Date(r.start_time).toISOString().split("T")[0];
+        const rDate = toDateStr(new Date(r.start_time));
         return rDate === date;
       });
       setReservations(filtered);
