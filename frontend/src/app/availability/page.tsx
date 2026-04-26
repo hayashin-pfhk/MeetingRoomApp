@@ -13,7 +13,7 @@ const baseTimeSlots = [
   "18:00", "18:30", "19:00",
 ];
 
-function buildTimeSlots(reservations: Reservation[], date: string): string[] {
+function buildTimeSlots(reservations: Reservation[]): string[] {
   const extra = new Set<string>();
 
   for (const r of reservations) {
@@ -89,7 +89,7 @@ export default function AvailabilityPage() {
   };
 
   const selectedStaffs = staffs.filter((s) => selectedIds.includes(s.id));
-  const timeSlots = buildTimeSlots(reservations, date);
+  const timeSlots = buildTimeSlots(reservations);
 
   return (
     <div>
