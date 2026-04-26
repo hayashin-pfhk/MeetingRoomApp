@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Staff\StaffAvailabilityRequest;
 use App\Http\Requests\Staff\StoreStaffRequest;
 use App\Http\Requests\Staff\UpdateStaffRequest;
-use App\Http\Resources\StaffAvailabilityResource;
 use App\Http\Resources\StaffResource;
 use App\Models\Staff;
 use Illuminate\Http\JsonResponse;
@@ -56,25 +54,5 @@ class StaffController extends Controller
         $staff->delete();
 
         return response()->noContent();
-    }
-
-    // 空き状況一覧（指定した時間帯における各スタッフの空き/予定状態を返す）
-    public function availability(StaffAvailabilityRequest $request): AnonymousResourceCollection
-    {
-        $validated = $request->validated();
-        $startTime = $validated['start_time'];
-        $endTime   = $validated['end_time'];
-        $excludeId = $validated['exclude_reservation_id'] ?? null;
-
-        // 各スタッフについて、指定時間帯に重複する予約だけを Eager Load する
-        $staffs = Staff::with([
-            'reservations' => fn ($query) => $query
-                ->overlapping($startTime, $endTime, $excludeId)
-                ->with('room'),
-        ])
-            ->orderBy('id')
-            ->get();
-
-        return StaffAvailabilityResource::collection($staffs);
     }
 }
